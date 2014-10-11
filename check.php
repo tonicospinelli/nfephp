@@ -2,31 +2,35 @@
 
 require_once dirname(__FILE__).'/libs/Common/Requirements.php';
 
-$symfonyRequirements = new NFePHPRequirements();
+if(!empty($_SERVER['SERVER_SOFTWARE'])){
+    echo "<pre>";
+}
 
-$iniPath = $symfonyRequirements->getPhpIniConfigPath();
+$nfeRequirements = new NFePHPRequirements();
+
+$iniPath = $nfeRequirements->getPhpIniConfigPath();
 
 echo "********************************\n";
 echo "*                              *\n";
-echo "*  Symfony requirements check  *\n";
+echo "*  Requisitos para NFePHP      *\n";
 echo "*                              *\n";
 echo "********************************\n\n";
 
-echo $iniPath ? sprintf("* Configuration file used by PHP: %s\n\n", $iniPath) : "* WARNING: No configuration file (php.ini) used by PHP!\n\n";
+echo $iniPath ? sprintf("* Arquivo de configuração usado pelo PHP: %s\n\n", $iniPath) : "* WARNING: No configuration file (php.ini) used by PHP!\n\n";
 
-echo "** ATTENTION **\n";
-echo "*  The PHP CLI can use a different php.ini file\n";
-echo "*  than the one used with your web server.\n";
+echo "** ATENÇÃO **\n";
+echo "*  O PHP CLI pode usar um arquivo php.ini diferente do\n";
+echo "*  arquivo usado pelo seu servidor web.\n";
 if ('\\' == DIRECTORY_SEPARATOR) {
-    echo "*  (especially on the Windows platform)\n";
+    echo "*  (especialmente com a plataforma Windows)\n";
 }
-echo "*  To be on the safe side, please also launch the requirements check\n";
-echo "*  from your web server using the web/config.php script.\n";
+echo "*  Para ter certeza, por favor faça a chamada da análise de requisitos\n";
+echo "*  a partir do seu servidor web, usando este script.\n";
 
-echo_title('Mandatory requirements');
+echo_title('Requisitos Mandatórios');
 
 $checkPassed = true;
-foreach ($symfonyRequirements->getRequirements() as $req) {
+foreach ($nfeRequirements->getRequirements() as $req) {
     /** @var $req Requirement */
     echo_requirement($req);
     if (!$req->isFulfilled()) {
@@ -34,9 +38,9 @@ foreach ($symfonyRequirements->getRequirements() as $req) {
     }
 }
 
-echo_title('Optional recommendations');
+echo_title('Recomendações opcionais');
 
-foreach ($symfonyRequirements->getRecommendations() as $req) {
+foreach ($nfeRequirements->getRecommendations() as $req) {
     echo_requirement($req);
 }
 
@@ -47,7 +51,7 @@ exit($checkPassed ? 0 : 1);
  */
 function echo_requirement(Requirement $requirement)
 {
-    $result = $requirement->isFulfilled() ? 'OK' : ($requirement->isOptional() ? 'WARNING' : 'ERROR');
+    $result = $requirement->isFulfilled() ? 'OK' : ($requirement->isOptional() ? 'ATENÇÃO' : 'ERRO');
     echo ' ' . str_pad($result, 9);
     echo $requirement->getTestMessage() . "\n";
 

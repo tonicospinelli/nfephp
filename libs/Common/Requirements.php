@@ -19,7 +19,7 @@
  * It can be a mandatory requirement or an optional recommendation.
  * There is a special subclass, named PhpIniRequirement, to check a php.ini configuration.
  *
- * @author Tobias Schultze <http://tobion.de>
+ * @author Antonio Spinelli <tonicospinelli85@gmail.com>
  */
 class Requirement
 {
@@ -131,15 +131,15 @@ class PhpIniRequirement extends Requirement
             $fulfilled = call_user_func($evaluation, $cfgValue);
         } else {
             if (null === $testMessage) {
-                $testMessage = sprintf('%s %s be %s in php.ini',
+                $testMessage = sprintf('%s %s ser %s no php.ini',
                     $cfgName,
-                    $optional ? 'should' : 'must',
-                    $evaluation ? 'enabled' : 'disabled'
+                    $optional ? 'deveria' : 'deve',
+                    $evaluation ? 'habilitado' : 'desabilitado'
                 );
             }
 
             if (null === $helpHtml) {
-                $helpHtml = sprintf('Set <strong>%s</strong> to <strong>%s</strong> in php.ini<a href="#phpini">*</a>.',
+                $helpHtml = sprintf('Defina <strong>%s</strong> para <strong>%s</strong> no php.ini<a href="#phpini">*</a>.',
                     $cfgName,
                     $evaluation ? 'on' : 'off'
                 );
@@ -378,11 +378,11 @@ class NFePHPRequirements extends RequirementCollection
 
         $this->addRequirement(
             version_compare($installedPhpVersion, self::REQUIRED_PHP_VERSION, '>='),
-            sprintf('PHP version must be at least %s (%s installed)', self::REQUIRED_PHP_VERSION, $installedPhpVersion),
-            sprintf('You are running PHP version "<strong>%s</strong>", but Symfony needs at least PHP "<strong>%s</strong>" to run.
-                Before using Symfony, upgrade your PHP installation, preferably to the latest version.',
+            sprintf('A versão PHP deve ser pelo menos %s (%s está instalada)', self::REQUIRED_PHP_VERSION, $installedPhpVersion),
+            sprintf('Você está executando a versão PHP "<strong>%s</strong>", mas o NFePHP precisa de pelo menos PHP "<strong>%s</strong>" para funcionar.
+                Antes de usar NFePHP, atualize sua instalação do PHP, preferencialmente para a última versão.',
                 $installedPhpVersion, self::REQUIRED_PHP_VERSION),
-            sprintf('Install PHP %s or newer (installed version is %s)', self::REQUIRED_PHP_VERSION, $installedPhpVersion)
+            sprintf('Instale o PHP %s ou mais recente (a versão instalada é %s)', self::REQUIRED_PHP_VERSION, $installedPhpVersion)
         );
 
         $this->addRequirement(
@@ -393,23 +393,23 @@ class NFePHPRequirements extends RequirementCollection
 
         $this->addRequirement(
             is_dir(__DIR__.'/../../vendor/composer'),
-            'Vendor libraries must be installed',
-            'Vendor libraries are missing. Install composer following instructions from <a href="http://getcomposer.org/">http://getcomposer.org/</a>. ' .
-                'Then run "<strong>php composer.phar install</strong>" to install them.'
+            'As bibliotecas Vendor devem ser instaladas',
+            'As bibliotecas Vendor estão ausentes. Instale o composer seguindo as instruções a partir do <a href="http://getcomposer.org/">http://getcomposer.org/</a>. ' .
+                ' E execute "<strong>php composer.phar install</strong>" para instalá-las.'
         );
 
-        $cacheDir = is_dir('/var/www/nfe') ? '/var/www/nfe' : __DIR__.'/var/nfe';
+        $cacheDir = realpath(__DIR__ . '/../../');
 
         $this->addRequirement(
             is_writable($cacheDir),
-            '/var/www/nfe or var/nfe directory must be writable',
-            'Change the permissions of either "<strong>/var/www/nfe</strong>" or  "<strong>var/nfe</strong>" directory so that the web server can write into it.'
+            $cacheDir . ' deve ter permissão de escrita',
+            'Altere as permissões do diretório "<strong>'.$cacheDir.'</strong>" para o servidor web poder escrever.'
         );
 
         $this->addPhpIniRequirement(
             'date.timezone', true, false,
-            'date.timezone setting must be set',
-            'Set the "<strong>date.timezone</strong>" setting in php.ini<a href="#phpini">*</a> (like Europe/Paris).'
+            'configuração do date.timezone deve ser definida',
+            'Defina o "<strong>date.timezone</strong>" no php.ini<a href="#phpini">*</a> (ex. America/Sao_Paulo).'
         );
 
         if (version_compare($installedPhpVersion, self::REQUIRED_PHP_VERSION, '>=')) {
@@ -429,31 +429,31 @@ class NFePHPRequirements extends RequirementCollection
 
         $this->addRequirement(
             function_exists('json_encode'),
-            'json_encode() must be available',
-            'Install and enable the <strong>JSON</strong> extension.'
+            'json_encode() deve estar disponível',
+            'Instale e ative a extensão <strong>JSON</strong>.'
         );
 
         $this->addRequirement(
             function_exists('session_start'),
-            'session_start() must be available',
-            'Install and enable the <strong>session</strong> extension.'
+            'session_start() deve estar disponível',
+            'Instale e ative a extensão <strong>session</strong>.'
         );
 
         $this->addRequirement(
             function_exists('ctype_alpha'),
-            'ctype_alpha() must be available',
-            'Install and enable the <strong>ctype</strong> extension.'
+            'ctype_alpha() deve estar disponível',
+            'Instale e ative a extensão <strong>ctype</strong>.'
         );
 
         $this->addRequirement(
             function_exists('token_get_all'),
-            'token_get_all() must be available',
+            'token_get_all() deve estar disponível',
             'Install and enable the <strong>Tokenizer</strong> extension.'
         );
 
         $this->addRequirement(
             function_exists('simplexml_import_dom'),
-            'simplexml_import_dom() must be available',
+            'simplexml_import_dom() deve estar disponível',
             'Install and enable the <strong>SimpleXML</strong> extension.'
         );
 
@@ -507,8 +507,8 @@ class NFePHPRequirements extends RequirementCollection
 
         $this->addRequirement(
             null !== $pcreVersion,
-            'PCRE extension must be available',
-            'Install the <strong>PCRE</strong> extension (version 8.0+).'
+            'Extensão PCRE deve estar disponível',
+            'Instale a extensão <strong>PCRE</strong> (version 8.0+).'
         );
 
         /* optional recommendations follow */
@@ -587,14 +587,14 @@ class NFePHPRequirements extends RequirementCollection
 
         $this->addRecommendation(
             class_exists('Locale'),
-            'intl extension should be available',
+            'extensão intl deveria ser instalada',
             'Install and enable the <strong>intl</strong> extension (used for validators).'
         );
 
         if (class_exists('Collator')) {
             $this->addRecommendation(
-                null !== new Collator('fr_FR'),
-                'intl extension should be correctly configured',
+                null !== new Collator('pt_BR'),
+                'extensão intl deveria ser configurada corretamente',
                 'The intl extension does not behave properly. This problem is typical on PHP 5.3.X x64 WIN builds.'
             );
         }
@@ -636,8 +636,8 @@ class NFePHPRequirements extends RequirementCollection
 
         $this->addRecommendation(
             $accelerator,
-            'a PHP accelerator should be installed',
-            'Install and enable a <strong>PHP accelerator</strong> like APC (highly recommended).'
+            'um Acelerador PHP deveria ser instalado',
+            'Instale e habilite <strong>Acelerador PHP</strong> como APC (altamente recomendado).'
         );
 
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -657,20 +657,5 @@ class NFePHPRequirements extends RequirementCollection
         $this->addPhpIniRecommendation('register_globals', false, true);
 
         $this->addPhpIniRecommendation('session.auto_start', false);
-
-        $this->addRecommendation(
-            class_exists('PDO'),
-            'PDO should be installed',
-            'Install <strong>PDO</strong> (mandatory for Doctrine).'
-        );
-
-        if (class_exists('PDO')) {
-            $drivers = PDO::getAvailableDrivers();
-            $this->addRecommendation(
-                count($drivers) > 0,
-                sprintf('PDO should have some drivers installed (currently available: %s)', count($drivers) ? implode(', ', $drivers) : 'none'),
-                'Install <strong>PDO drivers</strong> (mandatory for Doctrine).'
-            );
-        }
     }
 }
